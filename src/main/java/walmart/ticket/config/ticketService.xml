@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <bean id="ticketServiceProperties"  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+     <property name="location" value="classpath:/walmart/ticket/config/ticketService.properties" />
+ </bean>
+ 
+ <bean id="ticketService" class="walmart.ticket.service.impl.TicketServiceImpl">
+	 <constructor-arg index="0" ref="venueSeatsModel"/>
+	 <constructor-arg index="1" ref="venueSeatHoldModel"/>
+	 <constructor-arg index="2" ref="venueConfig"/>
+ </bean>
+ <bean id="venueSeatsModel" class="walmart.ticket.service.model.impl.VenueSeatsModel">
+ 	<constructor-arg index="0" ref="venueConfig"/>
+ 	<constructor-arg index="1" >
+		 <list>
+		 	<ref bean="levelSeatModel1"/>
+		 	<ref bean="levelSeatModel2"/>
+		 	<ref bean="levelSeatModel3"/>
+		 	<ref bean="levelSeatModel4"/>
+		 </list>
+	</constructor-arg>
+ </bean>
+ <bean id="venueSeatHoldModel" class="walmart.ticket.service.model.impl.VenueSeatHoldModel">
+ 	<constructor-arg index="0" ref="confirmationCodeGenerator"/>
+ 	<constructor-arg index="1" ref="dummySeatHoldStateRepository"/>
+ 	<constructor-arg index="2" ref="scheduledThreadPoolExecutor"/>
+ 	<constructor-arg index="3" value="${max.hold.time}"/>
+ </bean>
+ <bean id="dummySeatStateRepository" class="walmart.ticket.service.repo.impl.DummySeatStateRepository"/>
+ <bean id="dummySeatHoldStateRepository" class="walmart.ticket.service.repo.impl.DummySeatHoldStateRepository"/>
+  
+  <bean id="scheduledThreadPoolExecutor" class="java.util.concurrent.ScheduledThreadPoolExecutor" destroy-method="shutdown">
+    <constructor-arg index="0" value="1"/>
+ </bean>
+ <bean id="confirmationCodeGenerator" class="walmart.ticket.service.impl.DefaultCodeGenerator"/>
+ 
+ <bean id="venueConfig" class="walmart.ticket.service.data.VenueConfig">
+	<constructor-arg index="0" >
+		 <list>
+		 	<ref bean="level1"/>
+		 	<ref bean="level2"/>
+		 	<ref bean="level3"/>
+		 	<ref bean="level4"/>
+		 </list>
+	</constructor-arg>
+ </bean>
+  <bean id="venueSeatsMemoryStoreAbstract" class="walmart.ticket.service.model.impl.LevelSeatModel" abstract="true">
+  	<constructor-arg index="1" ref="defaultSeatPositionRankWithInRow"/>
+  	<constructor-arg index="2" ref="dummySeatStateRepository"/>
+ </bean>
+ <bean id="defaultSeatPositionRankWithInRow" class="walmart.ticket.service.impl.DefaultSeatPositionRankWithInRow"/>
+ 
+ 
+ <bean id="levelSeatModel1" class="walmart.ticket.service.model.impl.LevelSeatModel" parent="venueSeatsMemoryStoreAbstract">
+     <constructor-arg index="0" ref="level1"/>
+ </bean>
+ <bean id="levelSeatModel2" class="walmart.ticket.service.model.impl.LevelSeatModel" parent="venueSeatsMemoryStoreAbstract">
+     <constructor-arg index="0" ref="level2"/>
+ </bean>
+ <bean id="levelSeatModel3" class="walmart.ticket.service.model.impl.LevelSeatModel" parent="venueSeatsMemoryStoreAbstract">
+     <constructor-arg index="0" ref="level3"/>
+ </bean>
+ <bean id="levelSeatModel4" class="walmart.ticket.service.model.impl.LevelSeatModel" parent="venueSeatsMemoryStoreAbstract">
+     <constructor-arg index="0" ref="level4"/>
+ </bean>
+ 
+ <bean id="level1" class="walmart.ticket.service.data.Level">
+ 	<constructor-arg index="0" value="${venue.level1.id}"/>
+ 	<constructor-arg index="1" value="${venue.level1.name}"/>
+ 	<constructor-arg index="2" value="${venue.level1.price}"/>
+ 	<constructor-arg index="3" value="${venue.level1.noOfRows}"/>
+ 	<constructor-arg index="4" value="${venue.level1.seatPerRow}"/>
+ </bean>
+<bean id="level2" class="walmart.ticket.service.data.Level">
+ 	<constructor-arg index="0" value="${venue.level2.id}"/>
+ 	<constructor-arg index="1" value="${venue.level2.name}"/>
+ 	<constructor-arg index="2" value="${venue.level2.price}"/>
+ 	<constructor-arg index="3" value="${venue.level2.noOfRows}"/>
+ 	<constructor-arg index="4" value="${venue.level2.seatPerRow}"/>
+ </bean>
+ <bean id="level3" class="walmart.ticket.service.data.Level">
+ 	<constructor-arg index="0" value="${venue.level3.id}"/>
+ 	<constructor-arg index="1" value="${venue.level3.name}"/>
+ 	<constructor-arg index="2" value="${venue.level3.price}"/>
+ 	<constructor-arg index="3" value="${venue.level3.noOfRows}"/>
+ 	<constructor-arg index="4" value="${venue.level3.seatPerRow}"/>
+ </bean>
+ <bean id="level4" class="walmart.ticket.service.data.Level">
+ 	<constructor-arg index="0" value="${venue.level4.id}"/>
+ 	<constructor-arg index="1" value="${venue.level4.name}"/>
+ 	<constructor-arg index="2" value="${venue.level4.price}"/>
+ 	<constructor-arg index="3" value="${venue.level4.noOfRows}"/>
+ 	<constructor-arg index="4" value="${venue.level4.seatPerRow}"/>
+ </bean>
+ 
+</beans>
